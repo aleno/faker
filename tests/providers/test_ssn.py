@@ -683,3 +683,27 @@ class TestPlPL(unittest.TestCase):
     def test_vat_id(self):
         for _ in range(100):
             assert re.search(r'^PL\d{10}$', self.factory.vat_id())
+
+
+class TestSvSE(unittest.TestCase):
+    """ Tests SSN in the sv_SE locale """
+
+    def setUp(self):
+        self.factory = Faker('sv_SE')
+
+    def test_valid_ssn(self):
+        for _ in range(100):
+            ssn = self.factory.ssn()
+            individual_number = int(ssn[2])
+            assert len(ssn) == 11
+            assert individual_number < 2
+
+    def test_corporate_ssn(self):
+        for _ in range(100):
+            generate_type = int(self.factory.random.choice('12356789'))
+            ssn = self.factory.ssn(corporate_type=generate_type)
+            corporate_type = int(ssn[0])
+            individual_number = int(ssn[2])
+            assert len(ssn) == 11
+            assert corporate_type == generate_type
+            assert individual_number >= 2
